@@ -34,9 +34,12 @@ build:
 cross:
 	$(foreach GOOS, $(PLATFORMS),\
 		$(foreach GOARCH, $(ARCHITECTURES), $(shell export GOOS=$(GOOS); export GOARCH=$(GOARCH); \
-	env CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o opa-$(GOOS)-$(GOARCH) ./cmd/opa ))) \
+	env CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o opa-$(GOOS)-$(GOARCH) ./cmd/opa; \
+	shasum -a 256 opa-$(GOOS)-$(GOARCH) > opa-$(GOOS)-$(GOARCH).sha256 ))) \
 	env GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o opa-darwin-arm64 ./cmd/opa
+	shasum -a 256 opa-darwin-arm64 > opa-darwin-arm64.sha256
 	env GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o opa-linux-arm64 ./cmd/opa
+	shasum -a 256 opa-linux-arm64 > opa-linux-arm64.sha256
 	
 .PHONY: download
 download: ## download dependencies via go mod
