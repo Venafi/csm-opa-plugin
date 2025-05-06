@@ -1,0 +1,36 @@
+name: Build-Release
+
+on:
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.23.6'
+          check-latest: true
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: build csm-opa-plugin
+        run: |
+          make cross
+          mv opa-windows-amd64 opa-windows-amd64.exe
+      - name: Upload artifacts
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts
+          path: |
+            opa-*
+            opa.-*sha256
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "opa-*,opa.-*sha256"
+          bodyFile: "CHANGELOG.md"
+          prerelease: true
