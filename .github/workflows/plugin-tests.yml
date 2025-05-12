@@ -9,12 +9,11 @@ on:
 env:
   VSIGN_URL: ${{ secrets.TPP_URL }}
   VSIGN_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-  VSIGN_PROJECT: ${{ secrets.TPP_PROJECT }}
 
 jobs:
   plugin-tests:
     # Skip if running in a fork that might not have secrets configured.
-    if: ${{ github.repository == 'venafi/sigstore-kms-venafi' }}
+    if: ${{ github.repository == 'venafi/csm-opa-plugin' }}
     name: Run tests
     runs-on: ubuntu-latest
    
@@ -33,5 +32,9 @@ jobs:
           echo "$PWD" >> $GITHUB_PATH
       - name: Sign with opa plugin
         run: |
+          echo "Sign with RSA certificate"
           ./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\rsa2048-cert --signing-plugin csm-opa-plugin
           ./bin/opa sign --bundle --signing-key vsign\\rsa2048-cert --signing-plugin csm-opa-plugin ./policy
+          echo "Sign with ECDSA certificate"
+          ./bin/opa sign --bundle --signing-key vsign\\p256-cert --signing-plugin csm-opa-plugin ./policy
+
