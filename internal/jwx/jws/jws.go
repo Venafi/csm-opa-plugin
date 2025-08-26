@@ -26,7 +26,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/rsa"
-	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -75,11 +74,17 @@ func SignLiteral(payload []byte, alg jwa.SignatureAlgorithm, key string, hdrBuf 
 		return nil, fmt.Errorf("unable to get environment: %s", err)
 	}
 
-	certs, err := c.ParseCertificates(e.CertificateChainData)
-	if err != nil {
-		return nil, fmt.Errorf("error loading certificate: %s", err)
+	var mech = c.RsaPkcs
+
+	if e.CertificateChainData != nil {
+		certs, err := c.ParseCertificates(e.CertificateChainData)
+		if err != nil {
+			return nil, fmt.Errorf("error loading certificate: %s", err)
+		}
+		mech = signingAlgToMech(certs[0].PublicKey)
+	} else {
+		mech = signingAlgToMech(e.PublicKey)
 	}
-	mech := signingAlgToMech(certs[0])
 
 	sig, err := connector.Sign(&endpoint.SignOption{
 		KeyID:     e.KeyID,
@@ -251,8 +256,8 @@ func parseCompact(str string) (m *Message, err error) {
 	return &msg, nil
 }
 
-func signingAlgToMech(cert *x509.Certificate) int {
-	switch cert.PublicKey.(type) {
+func signingAlgToMech(pubKey crypto.PublicKey) int {
+	switch pubKey.(type) {
 	case *ecdsa.PublicKey:
 		return c.EcDsa
 	case *rsa.PublicKey:

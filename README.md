@@ -26,6 +26,8 @@ For authentication only use either `VSIGN_TOKEN` or `VSIGN_JWT`, since the JWT w
 
 ### Signing and Running
 
+#### RSA
+
 ```sh
 ./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\rsa2048-cert --signing-plugin csm-opa-plugin
 ./bin/opa sign --bundle --signing-key vsign\\rsa2048-cert --signing-plugin csm-opa-plugin ./policy
@@ -34,3 +36,15 @@ For authentication only use either `VSIGN_TOKEN` or `VSIGN_JWT`, since the JWT w
 ```sh
 ./bin/opa run --bundle --verification-key vsign\\rsa2048-cert --verification-key-id vsign\\rsa2048-cert --exclude-files-verify data.json --exclude-files-verify policy/awesome.rego --exclude-files-verify .manifest --exclude-files-verify .signatures.json ./policy/bundle.tar.gz
 ```
+
+#### ECDSA
+
+```sh
+./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\p256 --signing-alg ES256 --signing-plugin csm-opa-plugin
+./bin/opa sign --bundle --signing-key vsign\\p256 --signing-alg ES256 --signing-plugin csm-opa-plugin ./policy
+```
+
+```sh
+./bin/opa run --bundle --verification-key vsign\\p256 --verification-key-id vsign\\p256 --signing-alg ES256 --exclude-files-verify data.json --exclude-files-verify policy/awesome.rego --exclude-files-verify .manifest --exclude-files-verify .signatures.json ./policy/bundle.tar.gz
+```
+

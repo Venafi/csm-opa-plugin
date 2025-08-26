@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v3.1.0
       - uses: actions/setup-go@v3.3.0
         with:
-          go-version: '1.23.6'
+          go-version: '1.24.3'
           check-latest: true
       - name: build cms-opa-plugin
         run: |
@@ -36,5 +36,12 @@ jobs:
           ./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\rsa2048-cert --signing-plugin csm-opa-plugin
           ./bin/opa sign --bundle --signing-key vsign\\rsa2048-cert --signing-plugin csm-opa-plugin ./policy
           echo "Sign with ECDSA certificate"
-          ./bin/opa sign --bundle --signing-key vsign\\p256-cert --signing-plugin csm-opa-plugin ./policy
+          ./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\p256-cert --signing-plugin csm-opa-plugin
+          ./bin/opa sign --bundle --signing-key vsign\\p256-cert --signing-alg ES256 --signing-plugin csm-opa-plugin ./policy
+          echo "Sign with RSA keypair"
+          ./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\rsa2048 --signing-plugin csm-opa-plugin
+          ./bin/opa sign --bundle --signing-key vsign\\rsa2048 --signing-plugin csm-opa-plugin ./policy
+          echo "Sign with ECDSA keypair"
+          ./bin/opa build --bundle ./policy --output ./policy/bundle.tar.gz --signing-key vsign\\p256 --signing-alg ES256 --signing-plugin csm-opa-plugin
+          ./bin/opa sign --bundle --signing-key vsign\\p256 --signing-alg ES256 --signing-plugin csm-opa-plugin ./policy
 
