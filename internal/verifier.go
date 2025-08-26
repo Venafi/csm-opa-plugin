@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/open-policy-agent/opa/bundle"
+	"github.com/open-policy-agent/opa/v1/bundle"
 	"github.com/venafi/csm-opa-plugin/internal/jwx/jwa"
 	"github.com/venafi/csm-opa-plugin/internal/jwx/jws"
 	c "github.com/venafi/vsign/pkg/crypto"
@@ -140,7 +140,14 @@ func loadPublicKey(keyResourceID string) (crypto.PublicKey, error) {
 		return nil, fmt.Errorf("unable to get environment: %s", err)
 	}
 
-	certs, err := c.ParseCertificates(e.CertificateChainData)
-	return certs[0].PublicKey, nil
+	if e.CertificateChainData != nil {
+		certs, err := c.ParseCertificates(e.CertificateChainData)
+		if err != nil {
+			return nil, fmt.Errorf("unable to parse certificates: %s", err)
+		}
+		return certs[0].PublicKey, nil
+	} else {
+		return e.PublicKey, nil
+	}
 
 }

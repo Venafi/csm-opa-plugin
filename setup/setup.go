@@ -1,8 +1,8 @@
 package setup
 
 import (
-	"github.com/open-policy-agent/opa/bundle"
 	"github.com/open-policy-agent/opa/cmd"
+	"github.com/open-policy-agent/opa/v1/bundle"
 
 	"github.com/spf13/cobra"
 
@@ -27,12 +27,22 @@ func SetupRootCommand(additionalCommands *map[string]bool) *cobra.Command {
 
 	// Add any additional cmd parameters needed...
 
-	cmd.RootCommand.PersistentPreRun = func(command *cobra.Command, args []string) {
+	/*cmd.RootCommand.PersistentPreRun = func(command *cobra.Command, args []string) {
 		if _, ok := commandsWithAws[command.Use]; ok {
 			bundle.RegisterSigner("csm-opa-plugin", &internal.CustomSigner{})
 			bundle.RegisterVerifier("csm-opa-plugin", &internal.CustomVerifier{})
 		}
 	}
 
-	return cmd.RootCommand
+	return cmd.RootCommand*/
+
+	command := cmd.Command(nil, "OPA")
+	command.PersistentPreRun = func(command *cobra.Command, args []string) {
+		if _, ok := commandsWithAws[command.Use]; ok {
+			bundle.RegisterSigner("csm-opa-plugin", &internal.CustomSigner{})
+			bundle.RegisterVerifier("csm-opa-plugin", &internal.CustomVerifier{})
+		}
+	}
+
+	return command
 }
