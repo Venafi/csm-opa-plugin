@@ -3,7 +3,7 @@ module github.com/venafi/csm-opa-plugin
 go 1.25.0
 
 require (
-	github.com/rs/zerolog v1.34.0
+	github.com/rs/zerolog v1.35.1
 	github.com/spf13/cobra v1.10.2
 )
 
