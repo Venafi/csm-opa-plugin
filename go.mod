@@ -112,7 +112,7 @@ require (
 
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/open-policy-agent/opa v1.18.0
+	github.com/open-policy-agent/opa v1.18.1
 	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/venafi/vsign v1.0.3
 )
